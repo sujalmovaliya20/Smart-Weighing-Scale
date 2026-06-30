@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAHIL SMART SCALE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07111f;
+      --panel: #0f1c2d;
+      --panel-2: #16253b;
+      --accent: #39d98a;
+      --accent-2: #5bd4ff;
+      --text: #f3f8ff;
+      --muted: #8ca0b8;
+      --warn: #ffb84d;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, var(--bg), #101f33);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .card {
+      max-width: 960px;
+      margin: 0 auto;
+      background: rgba(15, 28, 45, 0.96);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.32);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(239, 68, 68, 0.12);
+      color: #f87171;
+      font-weight: 600;
+      font-size: 14px;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .status.connected {
+      background: rgba(57, 217, 138, 0.14);
+      color: var(--accent);
+      border-color: rgba(57, 217, 138, 0.25);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #f87171;
+      box-shadow: 0 0 10px #f87171;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .status.connected .dot {
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(57, 217, 138, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 8px rgba(57, 217, 138, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(57, 217, 138, 0);
+      }
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 8px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      padding: 8px 16px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      box-shadow: none;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+      transform: none;
+      box-shadow: none;
+    }
+
+    .tab-btn.active {
+      color: var(--accent-2);
+      background: rgba(91, 212, 255, 0.1);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .customer-setup {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--panel-2);
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .customer-setup input {
+      background: rgba(7, 17, 31, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 10px 14px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      flex-grow: 1;
+      min-width: 200px;
+    }
+
+    .customer-setup input:focus {
+      outline: none;
+      border-color: var(--accent-2);
+    }
+
+    .active-customer-badge {
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(57, 217, 138, 0.15);
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(57, 217, 138, 0.25);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 16px 0 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 18px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      color: white;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+      filter: brightness(1.15);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .btn-connect {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    }
+    .btn-sync {
+      background: linear-gradient(135deg, #10b981, #047857);
+    }
+    .btn-clear-table {
+      background: linear-gradient(135deg, #6b7280, #374151);
+    }
+    .btn-clear-flash {
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+    }
+    .btn-export {
+      background: linear-gradient(135deg, #8b5cf6, #5b21b6);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border-radius: 14px;
+      margin-top: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(15, 28, 45, 0.4);
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--panel-2);
+      color: var(--accent-2);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    td {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 15px;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .summary {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .summary .box {
+      background: var(--panel-2);
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.3s ease;
+    }
+
+    .summary .box:hover {
+      border-color: rgba(91, 212, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .summary .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .summary .value {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 24px 0;
+    }
+
+    @media (max-width: 700px) {
+      body { padding: 12px; }
+      .card { padding: 16px; }
+      .title { font-size: 22px; }
+      th, td { padding: 10px 8px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="topbar">
+      <div class="title">SAHIL SMART SCALE</div>
+      <div class="status" id="connStatus"><span class="dot"></span>Waiting for scale</div>
+    </div>
+
+    <!-- Tab Selection -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('live')">🔴 Live Weighing</button>
+      <button class="tab-btn" onclick="switchTab('history')">📜 Today's History</button>
+    </div>
+
+    <!-- Connection Hint -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+      <div id="hint" style="color: var(--muted);">Connect to the scale to manage weighing data.</div>
+      <button class="btn-connect" onclick="connectToScale()">🔌 Connect Scale</button>
+    </div>
+
+    <!-- Live Tab Content -->
+    <div id="liveTab" class="tab-content active">
+      <div style="font-size: 13px; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+        <span>ℹ️</span> <span>Weighing data is saved to scale flash and history automatically on every stable reading. Switching customers clears this live view but keeps all history.</span>
+      </div>
+      
+      <div class="customer-setup">
+        <div style="font-weight: 600;">Active Customer: <span id="activeCustomerName" class="active-customer-badge">None</span></div>
+        <input type="text" id="customerInput" placeholder="Enter Customer Name, Invoice, Order..." />
+        <button class="btn-sync" onclick="setCustomer()">Set Customer</button>
+        <button class="btn-clear-table" onclick="nextCustomer()">Next Customer</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Item #</th>
+            <th>Weight</th>
+            <th>Time</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="liveRows"></tbody>
+      </table>
+    </div>
+
+    <!-- History Tab Content -->
+    <div id="historyTab" class="tab-content">
+      <div class="controls">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; width: 100%;">
+          <button class="btn-sync" onclick="syncHistory()">🔄 Fetch Today's Records</button>
+          <button class="btn-clear-table" onclick="clearTable()">🧹 Clear Local Display Cache</button>
+          <button class="btn-clear-flash" style="background: linear-gradient(135deg, var(--warn), #d97706);" onclick="clearScaleFlash()">⚠️ Clear Scale Today's Records</button>
+          <button class="btn-export" onclick="exportCsv()">📥 Export CSV</button>
+        </div>
+      </div>
+
+      <div class="customer-setup" style="margin-top: 15px;">
+        <input type="text" id="searchInput" placeholder="🔍 Search records by customer name..." oninput="renderHistoryRows()" />
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Item #</th>
+            <th>Weight</th>
+            <th>Time</th>
+            <th>Date</th>
+            <th style="width: 50px;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="historyRows"></tbody>
+      </table>
+    </div>
+
+    <!-- Bottom Stat Summary Panel -->
+    <div class="summary">
+      <div class="box"><div class="label">Entries</div><div class="value" id="entries">0</div></div>
+      <div class="box"><div class="label">Total Weight</div><div class="value" id="total">0.000 kg</div></div>
+      <div class="box"><div class="label">Average</div><div class="value" id="avg">0.000 kg</div></div>
+      <div class="box"><div class="label">Last Weight</div><div class="value" id="last">0.000 kg</div></div>
+    </div>
+  </div>
+
+  <script>
+    const liveRowsEl = document.getElementById('liveRows');
+    const historyRowsEl = document.getElementById('historyRows');
+    const entriesEl = document.getElementById('entries');
+    const totalEl = document.getElementById('total');
+    const avgEl = document.getElementById('avg');
+    const lastEl = document.getElementById('last');
+    const connStatusEl = document.getElementById('connStatus');
+    const hintEl = document.getElementById('hint');
+
+    const records = [];
+    const STORAGE_KEY = 'sahilSmartScaleRecords';
+    const SERVICE_UUID = '12345678-1234-1234-1234-123456789001';
+    const CHARACTERISTIC_UUID = '12345678-1234-1234-1234-123456789002';
+
+    let bluetoothDevice = null;
+    let characteristic = null;
+    let reconnectTimer = null;
+    let audioCtx = null;
+    let currentTab = 'live';
+    let activeCustomer = '';
+
+    function isLocalStorageAvailable() {
+      try {
+        const testKey = '__sahil_test__';
+        localStorage.setItem(testKey, testKey);
+        localStorage.removeItem(testKey);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function saveRecords() {
+      if (!isLocalStorageAvailable()) return;
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      } catch (e) {
+        console.warn('Failed to save records', e);
+      }
+    }
+
+    function loadRecords() {
+      if (!isLocalStorageAvailable()) return;
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          parsed.forEach(item => {
+            if (item && typeof item.item !== 'undefined') {
+              records.push(item);
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('Failed to load saved records', e);
+      }
+    }
+
+    function loadActiveCustomer() {
+      activeCustomer = localStorage.getItem('sahilActiveCustomer') || '';
+      document.getElementById('activeCustomerName').textContent = activeCustomer || 'None';
+      if (activeCustomer) {
+        document.getElementById('customerInput').value = activeCustomer;
+      }
+    }
+
+    function saveActiveCustomer(name) {
+      activeCustomer = name;
+      localStorage.setItem('sahilActiveCustomer', name);
+      document.getElementById('activeCustomerName').textContent = name || 'None';
+    }
+
+    function ensureAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(err => console.warn('Audio resume failed', err));
+      }
+      return audioCtx;
+    }
+
+    function playBeep() {
+      try {
+        const ctx = ensureAudioContext();
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 880;
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+
+        oscillator.start();
+        oscillator.stop(ctx.currentTime + 0.1);
+      } catch (e) {
+        console.warn('Beep failed', e);
+      }
+    }
+
+    function switchTab(tabId) {
+      currentTab = tabId;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      if (tabId === 'live') {
+        document.querySelector('button[onclick="switchTab(\'live\')"]').classList.add('active');
+        document.getElementById('liveTab').classList.add('active');
+        renderLiveRows();
+      } else {
+        document.querySelector('button[onclick="switchTab(\'history\')"]').classList.add('active');
+        document.getElementById('historyTab').classList.add('active');
+        renderHistoryRows();
+      }
+    }
+
+    function renderLiveRows() {
+      const liveRecords = records.filter(r => r.customer === activeCustomer);
+
+      if (!activeCustomer) {
+        liveRowsEl.innerHTML = '<tr><td colspan="4" class="empty">Please set an active customer to begin weighing</td></tr>';
+        updateSummary(liveRecords);
+        return;
+      }
+
+      if (!liveRecords.length) {
+        liveRowsEl.innerHTML = '<tr><td colspan="4" class="empty">No entries for this customer yet</td></tr>';
+        updateSummary(liveRecords);
+        return;
+      }
+
+      liveRowsEl.innerHTML = liveRecords.map(r => `
+        <tr>
+          <td>${r.item}</td>
+          <td>${Number(r.weight).toFixed(3)} kg</td>
+          <td>${r.time}</td>
+          <td>${r.date}</td>
+        </tr>
+      `).join('');
+      updateSummary(liveRecords);
+    }
+
+    function renderHistoryRows() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      let filtered = [];
+
+      records.forEach((r, idx) => {
+        if (!query || (r.customer && r.customer.toLowerCase().includes(query)) || String(r.item).includes(query)) {
+          filtered.push({ record: r, originalIndex: idx });
+        }
+      });
+
+      if (!filtered.length) {
+        historyRowsEl.innerHTML = '<tr><td colspan="6" class="empty">No records found matching search</td></tr>';
+        updateSummary(records);
+        return;
+      }
+
+      historyRowsEl.innerHTML = filtered.map(item => `
+        <tr>
+          <td>${item.record.customer || 'Unknown'}</td>
+          <td>${item.record.item}</td>
+          <td>${Number(item.record.weight).toFixed(3)} kg</td>
+          <td>${item.record.time}</td>
+          <td>${item.record.date}</td>
+          <td>
+            <button class="btn-clear-flash" style="background: linear-gradient(135deg, #ef4444, #b91c1c); padding: 4px 8px; margin: 0; font-size: 11px; min-width: unset; display: inline-flex;" onclick="deleteRecordLocal(${item.originalIndex})">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+      updateSummary(records);
+    }
+
+    function updateSummary(filteredList) {
+      const count = filteredList.length;
+      const total = filteredList.reduce((sum, r) => sum + Number(r.weight || 0), 0);
+      const avg = count ? total / count : 0;
+      const last = count ? filteredList[count - 1].weight : 0;
+
+      entriesEl.textContent = count;
+      totalEl.textContent = `${total.toFixed(3)} kg`;
+      avgEl.textContent = `${avg.toFixed(3)} kg`;
+      lastEl.textContent = `${Number(last).toFixed(3)} kg`;
+    }
+
+    async function setCustomer() {
+      const name = document.getElementById('customerInput').value.trim();
+      if (!name) {
+        alert('Please enter a customer name or identifier.');
+        return;
+      }
+      saveActiveCustomer(name);
+      
+      if (characteristic) {
+        try {
+          hintEl.textContent = `Setting active customer to: ${name}...`;
+          const encoder = new TextEncoder();
+          await characteristic.writeValue(encoder.encode(`SET_CUSTOMER:${name}`));
+          hintEl.textContent = `Active customer set to: ${name}.`;
+        } catch (e) {
+          console.warn('Failed to sync customer name with scale', e);
+          hintEl.textContent = 'Active customer set locally (Scale update failed).';
+        }
+      } else {
+        hintEl.textContent = `Active customer set locally to: ${name} (Scale offline).`;
+      }
+      renderLiveRows();
+    }
+
+    async function nextCustomer() {
+      if (characteristic) {
+        try {
+          hintEl.textContent = 'Finalizing current customer...';
+          const encoder = new TextEncoder();
+          await characteristic.writeValue(encoder.encode('NEXT_CUSTOMER'));
+          hintEl.textContent = 'Ready for next customer.';
+        } catch (e) {
+          console.warn('Failed to send NEXT_CUSTOMER command', e);
+        }
+      }
+      
+      saveActiveCustomer('');
+      document.getElementById('customerInput').value = '';
+      renderLiveRows();
+    }
+
+    function clearTable() {
+      if (!confirm('Clear local browser display cache? (Does not delete data from the scale)')) {
+        return;
+      }
+      records.splice(0, records.length);
+      saveRecords();
+      if (currentTab === 'live') {
+        renderLiveRows();
+      } else {
+        renderHistoryRows();
+      }
+    }
+
+    function deleteRecordLocal(index) {
+      const rec = records[index];
+      if (!rec) return;
+      if (!confirm(`Delete record (Item ${rec.item} for customer "${rec.customer || 'Unknown'}") from local display cache?`)) {
+        return;
+      }
+      records.splice(index, 1);
+      saveRecords();
+      if (currentTab === 'live') {
+        renderLiveRows();
+      } else {
+        renderHistoryRows();
+      }
+    }
+
+    async function clearScaleFlash() {
+      if (!characteristic) {
+        alert('Please connect to the scale first.');
+        return;
+      }
+      if (!confirm('Erase all customer records stored ON THE SCALE today? This cannot be undone.')) {
+        return;
+      }
+      try {
+        hintEl.textContent = 'Requesting flash reset...';
+        const encoder = new TextEncoder();
+        await characteristic.writeValue(encoder.encode('RESET_ALL'));
+        hintEl.textContent = 'Scale flash database deleted.';
+        
+        // Also clear browser cache
+        records.splice(0, records.length);
+        saveRecords();
+        if (currentTab === 'live') {
+          renderLiveRows();
+        } else {
+          renderHistoryRows();
+        }
+      } catch (err) {
+        console.error(err);
+        hintEl.textContent = 'Erase failed: ' + err.message;
+      }
+    }
+
+    function exportCsv() {
+      if (!records.length) return;
+      const header = ['Customer', 'Item #', 'Weight', 'Time', 'Date'];
+      const csvRows = [header.join(',')];
+      records.forEach(r => csvRows.push([r.customer || 'Unknown', r.item, r.weight, r.time, r.date].join(',')));
+
+      csvRows.push(['', '', '', '', ''].join(','));
+      csvRows.push(['Total Weight', totalEl.textContent, '', '', ''].join(','));
+      csvRows.push(['Average', avgEl.textContent, '', '', ''].join(','));
+      csvRows.push(['Export Time', new Date().toLocaleString(), '', '', ''].join(','));
+
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'scale-records.csv';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function setConnectedStatus(connected) {
+      if (connected) {
+        connStatusEl.className = 'status connected';
+        connStatusEl.innerHTML = '<span class="dot"></span>Connected';
+      } else {
+        connStatusEl.className = 'status';
+        connStatusEl.innerHTML = '<span class="dot"></span>Waiting for scale';
+      }
+    }
+
+    async function triggerAuthentication() {
+      if (!characteristic) return;
+      try {
+        hintEl.textContent = 'Authenticating with scale...';
+        const encoder = new TextEncoder();
+        await characteristic.writeValue(encoder.encode('AUTH:sahil1186'));
+      } catch (e) {
+        console.warn('Authentication write failed', e);
+        hintEl.textContent = 'Authentication handshake failed.';
+      }
+    }
+
+    async function triggerAutoSync() {
+      if (!characteristic) return;
+      try {
+        hintEl.textContent = 'Auto-syncing history from scale...';
+        const encoder = new TextEncoder();
+        await characteristic.writeValue(encoder.encode('GET_ALL_RECORDS'));
+        
+        // Restore active customer on scale if set
+        if (activeCustomer) {
+          setTimeout(async () => {
+            try {
+              await characteristic.writeValue(encoder.encode(`SET_CUSTOMER:${activeCustomer}`));
+              hintEl.textContent = `Scale synced. Active Customer: ${activeCustomer}`;
+            } catch (e) {
+              console.warn(e);
+            }
+          }, 600);
+        }
+      } catch (e) {
+        console.warn('Auto-sync failed', e);
+      }
+    }
+
+    async function syncHistory() {
+      if (!characteristic) {
+        alert('Please connect to the scale first.');
+        return;
+      }
+      try {
+        hintEl.textContent = 'Syncing history from scale...';
+        const encoder = new TextEncoder();
+        await characteristic.writeValue(encoder.encode('GET_ALL_RECORDS'));
+      } catch (err) {
+        console.error(err);
+        hintEl.textContent = 'Sync failed: ' + err.message;
+      }
+    }
+
+    function scheduleReconnect() {
+      if (reconnectTimer) return;
+      reconnectTimer = setTimeout(async () => {
+        reconnectTimer = null;
+        if (!bluetoothDevice) return;
+        hintEl.textContent = 'Attempting reconnect...';
+        try {
+          const server = await bluetoothDevice.gatt.connect();
+          const service = await server.getPrimaryService(SERVICE_UUID);
+          characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+          await characteristic.startNotifications();
+          characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicValue);
+
+          setConnectedStatus(true);
+          hintEl.textContent = 'Reconnected. Authenticating...';
+          setTimeout(triggerAuthentication, 500);
+        } catch (err) {
+          console.warn('Reconnect failed', err);
+          hintEl.textContent = 'Reconnect failed, retrying...';
+          scheduleReconnect();
+        }
+      }, 2000);
+    }
+
+    async function connectToScale() {
+      if (!navigator.bluetooth) {
+        hintEl.textContent = 'This browser does not support Web Bluetooth.';
+        return;
+      }
+
+      try {
+        const device = await navigator.bluetooth.requestDevice({
+          filters: [{ services: [SERVICE_UUID] }],
+          optionalServices: [SERVICE_UUID]
+        });
+
+        bluetoothDevice = device;
+        bluetoothDevice.addEventListener('gattserverdisconnected', () => {
+          setConnectedStatus(false);
+          hintEl.textContent = 'Scale disconnected, reconnecting...';
+          scheduleReconnect();
+        });
+
+        const server = await device.gatt.connect();
+        const service = await server.getPrimaryService(SERVICE_UUID);
+        characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+
+        await characteristic.startNotifications();
+        characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicValue);
+
+        setConnectedStatus(true);
+        hintEl.textContent = 'Connected. Authenticating...';
+        setTimeout(triggerAuthentication, 500);
+      } catch (err) {
+        console.error(err);
+        setConnectedStatus(false);
+        hintEl.textContent = 'Connection failed: ' + (err && err.message ? err.message : 'cancelled');
+      }
+    }
+
+    function handleCharacteristicValue(event) {
+      const value = event.target.value;
+      const decoder = new TextDecoder();
+      const text = decoder.decode(value);
+
+      if (text === 'AUTH_SUCCESS') {
+        hintEl.textContent = 'Authenticated. Syncing history...';
+        triggerAutoSync();
+        return;
+      }
+
+      if (text === 'AUTH_FAIL' || text === 'AUTH_REQUIRED') {
+        hintEl.textContent = 'Authentication failed. Data access blocked.';
+        alert('Scale authentication failed! Incorrect password.');
+        return;
+      }
+
+      if (text === 'SYNC_COMPLETE') {
+        hintEl.textContent = 'Scale data synchronized.';
+        return;
+      }
+
+      try {
+        const obj = JSON.parse(text);
+        if (obj && typeof obj.item !== 'undefined') {
+          // Check if record already exists in database
+          if (records.some(r => r.customer === obj.customer && r.item === obj.item)) {
+            return;
+          }
+          records.push(obj);
+          saveRecords();
+          playBeep();
+          
+          if (currentTab === 'live') {
+            renderLiveRows();
+          } else {
+            renderHistoryRows();
+          }
+        }
+      } catch (e) {
+        console.warn('Invalid BLE payload', text, e);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadRecords();
+      loadActiveCustomer();
+      if (currentTab === 'live') {
+        renderLiveRows();
+      } else {
+        renderHistoryRows();
+      }
+    });
+  </script>
+</body>
+</html>
