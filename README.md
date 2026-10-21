@@ -92,3 +92,40 @@ Next steps (recommended)
 3. Add calibration UI/serial commands and persist calibration values.
 
 If you want, I can implement step 1 now and update the sketch to persist the BLE password and add a serial command to change it.
+
+---
+
+# Web Dashboard & PWA
+
+The project includes an installable Progressive Web App (PWA) that connects directly to the ESP32 scale using Web Bluetooth.
+
+### Features
+- **Pure Web Bluetooth**: Direct hardware communication over BLE in browser — no native bridge or app store compilation required.
+- **Installable PWA**: Installable on Android (via Chrome) and Desktop (Chrome / Edge) as a standalone app with full offline support.
+- **Offline Capable**: Self-hosted Outfit fonts and Service Worker cache ensure full functionality even with no internet connection.
+- **Responsive Layout**: Fluid layout supporting small phones (320px) up to large displays (1440px+), transforming tables into touch-friendly cards on mobile.
+- **Safe & Resilient**:
+  - HTML escaping prevents XSS from user/customer names.
+  - CSV cell escaping handles quotes, commas, and newlines.
+  - Non-blocking toast notifications.
+  - Filtered search reflects real-time summary metrics.
+  - Automatic reconnect with exponential backoff.
+
+### Browser Compatibility
+- **Android**: Google Chrome (supports Web Bluetooth and PWA installation).
+- **Desktop**: Google Chrome, Microsoft Edge, Opera.
+- **iOS**: Web Bluetooth on iOS is supported via the [Bluefy Browser](https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055).
+
+### Local Development
+```bash
+# Serve locally
+npm run serve
+```
+Open `http://localhost:3000` (or the printed port) in a supported browser. Note that Web Bluetooth requires HTTPS or `localhost`.
+
+### Vercel Deployment
+The dashboard is configured for zero-build deployment on Vercel:
+1. Push to your GitHub repository.
+2. Vercel automatically deploys the static files (`index.html`, `style.css`, `app.js`, `ble.js`, `sw.js`, `manifest.webmanifest`, `icons/`, `fonts/`).
+3. Access your live HTTPS URL.
+

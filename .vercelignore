@@ -1,0 +1,18 @@
+# ESP32 Firmware (contains BLE auth password)
+v3-1.ino
+
+# IDE and Editor configs
+.vscode/
+
+# Maintenance & test scripts
+scripts/
+
+# Test output & screenshots
+screenshots/
+
+# Repository documentation & dependencies
+README.md
+package.json
+package-lock.json
+node_modules/
+.git/

@@ -1,9 +1,17 @@
+<<<<<<< HEAD
 # Dependencies and packages
+=======
+# Dependencies
+>>>>>>> cleanup-pwa
 node_modules/
 .pnp
 .pnp.js
 
+<<<<<<< HEAD
 # Build output and cache
+=======
+# Build and cache
+>>>>>>> cleanup-pwa
 .cache/
 dist/
 build/
@@ -19,15 +27,21 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+<<<<<<< HEAD
 .pnpm-debug.log*
 
 # System & Editor
 .vscode/
+=======
+
+# System & Editor
+>>>>>>> cleanup-pwa
 .idea/
 *.swp
 *~
 .DS_Store
 Thumbs.db
+<<<<<<< HEAD
 ehthumbs.db
 
 # Testing & screenshots
@@ -36,10 +50,18 @@ coverage/
 test_results/
 test-results/
 screenshots/
+=======
+>>>>>>> cleanup-pwa
 
 # Vercel
 .vercel
 
+<<<<<<< HEAD
 # Legacy Capacitor
 .capacitor/
 capacitor.config.json
+=======
+# Test artifacts
+screenshots/
+test-results/
+>>>>>>> cleanup-pwa
