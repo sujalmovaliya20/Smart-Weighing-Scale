@@ -1,0 +1,45 @@
+# Dependencies and packages
+node_modules/
+.pnp
+.pnp.js
+
+# Build output and cache
+.cache/
+dist/
+build/
+
+# Environment & credentials
+.env
+.env.production
+.env.development
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# System & Editor
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Testing & screenshots
+coverage/
+.nyc_output/
+test_results/
+test-results/
+screenshots/
+
+# Vercel
+.vercel
+
+# Legacy Capacitor
+.capacitor/
+capacitor.config.json
