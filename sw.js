@@ -1,5 +1,5 @@
 // Smart Weighing Scale - Progressive Web App Service Worker
-const CACHE_NAME = 'smart-scale-v2';
+const CACHE_NAME = 'smart-scale-v3';
 
 const PRECACHE_ASSETS = [
   './',
