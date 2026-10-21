@@ -12,7 +12,7 @@
 
 HX711 scale;
 LiquidCrystal_I2C lcd(0x27, 16, 2);
-
+ 
 Preferences prefs;
 RTC_DS3231 rtc;
 
